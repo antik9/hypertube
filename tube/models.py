@@ -2,7 +2,7 @@ from django.db import models
 
 
 def get_file_path(_, filename):
-    return f'user/{filename}'
+    return filename
 
 
 class Video(models.Model):
