@@ -7,3 +7,4 @@ def get_file_path(_, filename):
 
 class Video(models.Model):
     file = models.FileField(upload_to=get_file_path)
+    title = models.CharField('Название', max_length=255)

@@ -18,8 +18,10 @@ class VideoView(FormView):
     form_class = UploadFileForm
 
     def form_valid(self, form):
+        kwargs = self.get_form_kwargs()
         video = Video(
-            file=self.get_form_kwargs().get('files')['video']
+            file=kwargs.get('files')['video'],
+            title=kwargs['data'].get('title'),
         )
         video.save()
         video_id = video.id
@@ -110,5 +112,6 @@ def watch(request, video_id):
 
     context = {
         'url': f'/tube/{name}',
+        'title': video.title,
     }
     return HttpResponse(template.render(context, request))
