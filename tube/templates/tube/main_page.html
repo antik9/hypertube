@@ -1,0 +1,10 @@
+<h2><a href="/tube/">Hypertube</a></h2>
+{% if videos %}
+    {% for video in videos %}
+        <p><a href="/tube/watch/{{ video.id }}/">{{ video.title }}</a></p>
+    {% endfor %}
+{% else %}
+    <p>No videos are available.</p>
+{% endif %}
+
+<a href="/tube/upload/">Upload video</a>

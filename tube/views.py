@@ -115,3 +115,13 @@ def watch(request, video_id):
         'title': video.title,
     }
     return HttpResponse(template.render(context, request))
+
+
+def main_page(request):
+    videos = Video.objects.all()
+    template = loader.get_template('tube/main_page.html')
+
+    context = {
+        'videos': videos,
+    }
+    return HttpResponse(template.render(context, request))
