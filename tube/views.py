@@ -30,7 +30,7 @@ class VideoView(FormView):
 
     @staticmethod
     def __get_success_url(video_id):
-        return reverse('video_stream_detail', kwargs={'video_id': video_id})
+        return reverse('main_page')
 
 
 class VideoDetailView(DetailView):
