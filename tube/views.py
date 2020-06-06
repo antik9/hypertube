@@ -3,11 +3,13 @@ import re
 import mimetypes
 from wsgiref.util import FileWrapper
 
+
+from django.contrib.auth.models import User
 from django.http import HttpResponseRedirect
 from django.http.response import StreamingHttpResponse, HttpResponse
 from django.template import loader
 from django.urls import reverse
-from django.views.generic import FormView, DetailView
+from django.views.generic import FormView, DetailView, View
 
 from .forms import UploadFileForm
 from .models import Video
@@ -125,3 +127,19 @@ def main_page(request):
         'videos': videos,
     }
     return HttpResponse(template.render(context, request))
+
+
+class RegisterView(View):
+
+    def get(self, request):
+        template = loader.get_template('tube/register.html')
+        context = {}
+        return HttpResponse(template.render(context, request))
+
+    def post(self, request):
+        login = request.POST.get('login')
+        password = request.POST.get('password')
+        email = request.POST.get('email')
+        User.objects.create_user(login, email, password)
+        main_page = reverse('main_page')
+        return HttpResponseRedirect(main_page)
