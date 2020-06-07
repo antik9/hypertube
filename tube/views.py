@@ -4,6 +4,7 @@ import mimetypes
 from wsgiref.util import FileWrapper
 
 
+from django.contrib.auth import authenticate, login
 from django.contrib.auth.models import User
 from django.http import HttpResponseRedirect
 from django.http.response import StreamingHttpResponse, HttpResponse
@@ -127,6 +128,27 @@ def main_page(request):
         'videos': videos,
     }
     return HttpResponse(template.render(context, request))
+
+
+class AuthView(View):
+
+    def get(self, request):
+        template = loader.get_template('tube/auth.html')
+        context = {}
+        return HttpResponse(template.render(context, request))
+
+    def post(self, request):
+        username = request.POST['username']
+        password = request.POST['password']
+        user = authenticate(request, username=username, password=password)
+        if user is not None:
+            login(request, user)
+            main_page = reverse('main_page')
+            return HttpResponseRedirect(main_page)
+        else:
+            template = loader.get_template('tube/auth.html')
+            context = {}
+            return HttpResponse(template.render(context, request))
 
 
 class RegisterView(View):
