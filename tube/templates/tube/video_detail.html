@@ -3,3 +3,6 @@
   <source src="{{ url }}" type="video/mp4">
 </video>
 <p>{{ title }}</p>
+{% for tag in tags %}
+  <a href="/tube/?tag={{ tag }}">#{{ tag }}</a>
+{% endfor %}

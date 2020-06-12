@@ -13,7 +13,7 @@ from django.urls import reverse
 from django.views.generic import FormView, DetailView, View
 
 from .forms import UploadFileForm
-from .models import Video
+from .models import Video, Tag, VideoTag
 
 
 class VideoView(FormView):
@@ -22,6 +22,16 @@ class VideoView(FormView):
 
     def form_valid(self, form):
         kwargs = self.get_form_kwargs()
+        tags_str = kwargs['data'].get('tags')
+        tags = [x.strip() for x in tags_str.split('#')][1:]
+        existed_tags = {tag.name: tag.id for tag
+                        in Tag.objects.filter(name__in=tags)}
+        tags_to_create = [tag for tag in tags if tag not in existed_tags]
+        tags_ids = list(existed_tags.values())
+        for tag in tags_to_create:
+            created_tag = Tag.objects.create(name=tag)
+            tags_ids.append(created_tag.id)
+
         video = Video(
             file=kwargs.get('files')['video'],
             title=kwargs['data'].get('title'),
@@ -29,11 +39,10 @@ class VideoView(FormView):
         video.save()
         video_id = video.id
 
-        return HttpResponseRedirect(self.__get_success_url(video_id))
+        for tags_id in tags_ids:
+            VideoTag.objects.create(tag_id=tags_id, video_id=video_id)
 
-    @staticmethod
-    def __get_success_url(video_id):
-        return reverse('main_page')
+        return HttpResponseRedirect(reverse('main_page'))
 
 
 class VideoDetailView(DetailView):
@@ -111,21 +120,33 @@ def uploaded_stream_detail(request, name):
 def watch(request, video_id):
     video = Video.objects.filter(id=video_id).first()
     name = video.file.name if video else None
+    tags = [tag.name for tag
+            in Tag.objects.filter(videotag__video__id=video_id)]
+
     template = loader.get_template('tube/video_detail.html')
 
     context = {
         'url': f'/tube/{name}',
+        'tags': tags,
         'title': video.title,
     }
     return HttpResponse(template.render(context, request))
 
 
 def main_page(request):
-    videos = Video.objects.all()
+    tag = request.GET.get('tag', '')
+    if tag:
+        videos = Video.objects.filter(videotag__tag__name= tag.strip('#'))
+
+    else:
+        videos = Video.objects.all()
+
     template = loader.get_template('tube/main_page.html')
 
     context = {
         'videos': videos,
+        'tag': tag,
+        'video_count': videos.count()
     }
     return HttpResponse(template.render(context, request))
 

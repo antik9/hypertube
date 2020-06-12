@@ -1,4 +1,9 @@
 <h2><a href="/tube/">Hypertube</a></h2>
+<form action="/tube/" method="get">
+    <input type="search" id="tag" name="tag" value="{{ tag }}">
+    <input type="submit" value="search">
+</form>
+<p>{{ video_count }} videos</p>
 {% if videos %}
     {% for video in videos %}
         <p><a href="/tube/watch/{{ video.id }}/">{{ video.title }}</a></p>
