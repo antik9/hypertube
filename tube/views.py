@@ -10,10 +10,13 @@ from django.http import HttpResponseRedirect
 from django.http.response import StreamingHttpResponse, HttpResponse
 from django.template import loader
 from django.urls import reverse
-from django.views.generic import FormView, DetailView, View
+from django.views.generic import FormView, View
 
 from .forms import UploadFileForm
 from .models import Video, Tag, VideoTag
+
+
+range_re = re.compile(r'bytes\s*=\s*(\d+)\s*-\s*(\d*)', re.I)
 
 
 class VideoView(FormView):
@@ -43,15 +46,6 @@ class VideoView(FormView):
             VideoTag.objects.create(tag_id=tags_id, video_id=video_id)
 
         return HttpResponseRedirect(reverse('main_page'))
-
-
-class VideoDetailView(DetailView):
-    model = Video
-    template_name = 'tube/video_detail.html'
-    context_object_name = 'video_data'
-
-
-range_re = re.compile(r'bytes\s*=\s*(\d+)\s*-\s*(\d*)', re.I)
 
 
 class RangeFileWrapper(object):
