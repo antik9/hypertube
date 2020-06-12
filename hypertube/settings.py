@@ -25,7 +25,7 @@ SECRET_KEY = '_(l+b!c#@bx)kksgr$(zoh#!q8e8vxt4e&g&8gca_uu#h40i4z'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['hs-hypertube.herokuapp.com', 'localhost', '127.0.0.1']
 
 
 # Application definition
@@ -74,12 +74,16 @@ WSGI_APPLICATION = 'hypertube.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/2.2/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+try:
+    import django_heroku
+    django_heroku.settings(locals())
+except ImportError:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        }
     }
-}
 
 
 # Password validation
