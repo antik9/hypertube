@@ -11,6 +11,7 @@ from django.http.response import StreamingHttpResponse, HttpResponse
 from django.template import loader
 from django.urls import reverse
 from django.views.generic import FormView, View
+from cloudinary import uploader
 
 from .forms import UploadFileForm
 from .models import Video, Tag, VideoTag
@@ -42,9 +43,10 @@ class VideoView(FormView):
                 created_tag = Tag.objects.create(name=tag)
                 tags_ids.append(created_tag.id)
 
+            response = uploader.upload_large(kwargs.get('files')['video'])
             video = Video(
-                file=kwargs.get('files')['video'],
                 title=kwargs['data'].get('title'),
+                url=response['url']
             )
             video.save()
             video_id = video.id
@@ -129,7 +131,7 @@ def watch(request, video_id):
     template = loader.get_template('tube/video_detail.html')
 
     context = {
-        'url': f'/tube/{name}',
+        'url': video.url,
         'tags': tags,
         'title': video.title,
     }

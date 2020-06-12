@@ -12,6 +12,7 @@ class Tag(models.Model):
 class Video(models.Model):
     file = models.FileField(upload_to=get_file_path)
     title = models.CharField('Title', max_length=255)
+    url = models.CharField('url', max_length=512)
 
 
 class VideoTag(models.Model):
