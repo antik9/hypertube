@@ -33,7 +33,7 @@ class VideoView(FormView):
         if self.request.user.is_authenticated:
             kwargs = self.get_form_kwargs()
             tags_str = kwargs['data'].get('tags')
-            tags = [x.strip() for x in tags_str.split('#')][1:]
+            tags = [x.strip('#') for x in tags_str.split()]
             existed_tags = {tag.name: tag.id for tag
                             in Tag.objects.filter(name__in=tags)}
             tags_to_create = [tag for tag in tags if tag not in existed_tags]
