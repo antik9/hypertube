@@ -137,18 +137,22 @@ def watch(request, video_id):
 
 
 def main_page(request):
+    q = request.GET.get('q', '')
     tag = request.GET.get('tag', '')
     if tag:
         videos = Video.objects.filter(videotag__tag__name= tag.strip('#'))
-
     else:
         videos = Video.objects.all()
+
+    if q:
+        videos = videos.filter(title__icontains=q)
 
     template = loader.get_template('tube/main_page.html')
 
     context = {
-        'videos': videos,
+        'q': q,
         'tag': tag,
+        'videos': videos,
         'video_count': videos.count()
     }
     return HttpResponse(template.render(context, request))

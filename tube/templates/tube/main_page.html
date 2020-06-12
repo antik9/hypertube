@@ -1,8 +1,11 @@
 <h2><a href="/tube/">Hypertube</a></h2>
 <form action="/tube/" method="get">
-    <input type="search" id="tag" name="tag" value="{{ tag }}">
+    <input type="search" id="q" name="q" value="{{ q }}">
     <input type="submit" value="search">
 </form>
+{% if tag %}
+    <a href="/tube/?tag={{ tag }}">#{{ tag }}</a>
+{% endif %}
 <p>{{ video_count }} videos</p>
 {% if videos %}
     {% for video in videos %}
